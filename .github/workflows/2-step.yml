@@ -1,18 +1,14 @@
 name: Step 2
 
 on:
-  workflow_dispatch:
-  # Common event triggers: pull_request, push, issues, issue_comment (feel free to experiment)
-  # Docs: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
-  # Example:
-  # pull_request:
-  #   branches:
-  #     - main
-  #   types:
-  #     - closed
+  push:
+    branches:
+      - "copilot/test-debug"
+    paths:
+      - "tests/test_bill_splitter.py"
 
 permissions:
-  contents: write
+  contents: read
   actions: write
   issues: write
 
@@ -22,9 +18,8 @@ env:
 jobs:
   find_exercise:
     name: Find Exercise Issue
-    uses: skills/exercise-toolkit/.github/workflows/find-exercise-issue.yml@v0.9.1
+    uses: skills/exercise-toolkit/.github/workflows/find-exercise-issue.yml@v0.9.3
 
-  # This job is optional. We often call it a "grading job". If the step is not graded, remove it.
   check_step_work:
     name: Check step work
     runs-on: ubuntu-latest
@@ -37,12 +32,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install test dependencies
+        run: python -m pip install -r requirements.txt
+
       - name: Get response templates
         uses: actions/checkout@v6
         with:
           repository: skills/exercise-toolkit
           path: exercise-toolkit
-          ref: v0.9.1
+          ref: v0.9.3
 
       - name: Find last comment
         id: find-last-comment
@@ -61,24 +65,10 @@ jobs:
           file: exercise-toolkit/markdown-templates/step-feedback/checking-work.md
           edit-mode: replace
 
-      # START: Check practical exercise
-
-      # replace-me: Example of a grading check. You can add more checks as needed.
-      - name: Check if README file exists
-        id: check-file-exists
+      - name: Check focused tests
+        id: check-focused-tests
         continue-on-error: true
-        uses: skills/exercise-toolkit/actions/file-exists@v0.9.1
-        with:
-          file: README.md
-
-      # replace-me: Example of a grading check. You can add more checks as needed.
-      - name: Check for keyphrase in README.md
-        id: check-for-keyphrase
-        continue-on-error: true
-        uses: skills/action-keyphrase-checker@v1
-        with:
-          text-file: README.md
-          keyphrase: Installation guide
+        run: python .github/grading/check_tests.py focused
 
       - name: Update comment - step results
         uses: GrantBirki/comment@v2.1.1
@@ -91,22 +81,19 @@ jobs:
           vars: |
             step_number: 2
             results_table:
-              - description: "Checked if README.md file exists"
-                passed: ${{ steps.check-file-exists.outcome == 'success' }}
-              - description: "Checked for Installation guide in README.md"
-                passed: ${{ steps.check-for-keyphrase.outcome == 'success' }}
+              - description: "Focused tests cover an even split and a split with tip, and the visible suite passes"
+                passed: ${{ steps.check-focused-tests.outcome == 'success' }}
+            tips:
+              - "Use the exact names test_even_split and test_tip_is_included."
+              - "Assert explicit Decimal lists, then run python -m pytest -q locally."
 
-      # Add more checks as needed
-
-      # END: Check practical exercise
-
-      - name: Fail job if not all checks passed
-        if: contains(steps.*.outcome, 'failure')
+      - name: Fail job if checks failed
+        if: ${{ steps.check-focused-tests.outcome != 'success' }}
         run: exit 1
 
   post_next_step_content:
     name: Post next step content
-    needs: [find_exercise] # if check_step_work then "needs: [find_exercise, check_step_work]"
+    needs: [find_exercise, check_step_work]
     runs-on: ubuntu-latest
     env:
       ISSUE_REPOSITORY: ${{ github.repository }}
@@ -121,7 +108,7 @@ jobs:
         with:
           repository: skills/exercise-toolkit
           path: exercise-toolkit
-          ref: v0.9.1
+          ref: v0.9.3
 
       - name: Create comment - step finished
         uses: GrantBirki/comment@v2.1.1
@@ -148,7 +135,7 @@ jobs:
 
       - name: Disable current workflow and enable next one
         run: |
-          gh workflow disable "${{github.workflow}}"
+          gh workflow disable "${{ github.workflow }}"
           gh workflow enable "Step 3"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

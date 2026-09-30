@@ -1,11 +1,11 @@
-name: Step 1
+name: Step 4
 
 on:
   push:
     branches:
       - "copilot/test-debug"
     paths:
-      - "DEBUGGING.md"
+      - "src/bill_splitter.py"
 
 permissions:
   contents: read
@@ -13,7 +13,7 @@ permissions:
   issues: write
 
 env:
-  STEP_2_FILE: ".github/steps/2-step.md"
+  STEP_5_FILE: ".github/steps/5-step.md"
 
 jobs:
   find_exercise:
@@ -31,6 +31,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install test dependencies
+        run: python -m pip install -r requirements.txt
 
       - name: Get response templates
         uses: actions/checkout@v6
@@ -56,10 +65,10 @@ jobs:
           file: exercise-toolkit/markdown-templates/step-feedback/checking-work.md
           edit-mode: replace
 
-      - name: Check debugging notes
-        id: check-notes
+      - name: Run visible and grading tests
+        id: check-solution
         continue-on-error: true
-        run: python .github/grading/check_notes.py
+        run: python -m pytest -q tests .github/grading/test_solution.py
 
       - name: Update comment - step results
         uses: GrantBirki/comment@v2.1.1
@@ -70,16 +79,16 @@ jobs:
           edit-mode: replace
           file: exercise-toolkit/markdown-templates/step-feedback/step-results-table.md
           vars: |
-            step_number: 1
+            step_number: 4
             results_table:
-              - description: "Debugging notes explain the code, baseline evidence, and a falsifiable hypothesis"
-                passed: ${{ steps.check-notes.outcome == 'success' }}
+              - description: "The implementation preserves every cent across visible and additional cases"
+                passed: ${{ steps.check-solution.outcome == 'success' }}
             tips:
-              - "Replace every placeholder in DEBUGGING.md with at least a few specific sentences."
-              - "Push the notes on the copilot/test-debug branch."
+              - "Round the total once, convert it to integer cents, then use divmod."
+              - "Distribute remainder cents to the earliest shares and keep two-decimal Decimal values."
 
       - name: Fail job if checks failed
-        if: ${{ steps.check-notes.outcome != 'success' }}
+        if: ${{ steps.check-solution.outcome != 'success' }}
         run: exit 1
 
   post_next_step_content:
@@ -108,14 +117,14 @@ jobs:
           issue-number: ${{ env.ISSUE_NUMBER }}
           file: exercise-toolkit/markdown-templates/step-feedback/step-finished-prepare-next-step.md
           vars: |
-            next_step_number: 2
+            next_step_number: 5
 
       - name: Create comment - add step content
         uses: GrantBirki/comment@v2.1.1
         with:
           repository: ${{ env.ISSUE_REPOSITORY }}
           issue-number: ${{ env.ISSUE_NUMBER }}
-          file: ${{ env.STEP_2_FILE }}
+          file: ${{ env.STEP_5_FILE }}
 
       - name: Create comment - watching for progress
         uses: GrantBirki/comment@v2.1.1
@@ -127,6 +136,6 @@ jobs:
       - name: Disable current workflow and enable next one
         run: |
           gh workflow disable "${{ github.workflow }}"
-          gh workflow enable "Step 2"
+          gh workflow enable "Step 5"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

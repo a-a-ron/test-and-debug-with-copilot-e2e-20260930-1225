@@ -1,36 +1,53 @@
-## Step 1: (replace-me: STEP-NAME)
+## Step 1: Investigate before changing code
 
-(replace-me: OPTIONAL Brief story or scenario to introduce the step)
+The FairShare team has a bill splitter that passes its current tests, but a customer says some group totals are off by a cent. Resist the urge to ask Copilot for a fix immediately.
 
-(replace-me: OPTIONAL Reference images from the `.github/images/` directory to support any part of the content)
+### 📖 Theory: Evidence before edits
 
-<img width="200" alt="descriptive alt text" src="../images/inspectocat.png" />
+Copilot is useful for explaining unfamiliar code and suggesting hypotheses. Its explanation is not proof. A reliable debugging loop starts by understanding the contract, running the baseline, and recording a falsifiable hypothesis that a test can confirm or reject.
 
-### 📖 Theory: (replace-me: Theory title)
+> [!IMPORTANT]
+> In this exercise, Copilot is a partner, not an authority. Keep suggestions only after you can connect them to code, test output, or an invariant.
 
-<!-- GitHub-styled notifications can be used outside of ordered lists. Available options are: NOTE, IMPORTANT, WARNING, TIP, CAUTION -->
-<!--
-> [!NOTE]
-> (Important note or additional information relevant to this section)
- -->
+### ⌨️ Activity: Explain the code and form a hypothesis
 
-(replace-me: Optional theory or background information relevant to this step)
+1. In the **GitHub web UI**, open the exercise issue that contains this comment.
 
+1. In the **GitHub web UI**, select **Code** > **Codespaces** > **Create codespace on main**. Wait for VS Code to open.
 
-### ⌨️ Activity: (replace-me: Activity title)
+1. In the **Codespace terminal**, create and switch to the required branch:
 
-1. (replace-me: First instruction)
+   ```bash
+   git switch -c copilot/test-debug
+   ```
 
-    (replace-me: Make sure to properly indent any multiline instructions)
+1. In the **Codespace editor**, open `src/bill_splitter.py`, `tests/test_bill_splitter.py`, and `DEBUGGING.md`.
 
-1. (replace-me: Second instruction)
+1. In **Copilot Chat**, ask Copilot to explain the data flow in `split_bill`, identify the behavior the visible tests establish, and suggest a hypothesis for how a cent could be lost or invented. Ask for reasoning, not a code change.
 
-1. (replace-me: Additional instructions as needed)
+1. In the **Codespace terminal**, establish the baseline:
+
+   ```bash
+   python -m pytest -q
+   ```
+
+1. In the **Codespace editor**, replace every placeholder in `DEBUGGING.md`. Describe the code in your own words, record the baseline command and result, and write a specific hypothesis that a test could disprove.
+
+1. In the **Codespace terminal**, commit and push your notes:
+
+   ```bash
+   git add DEBUGGING.md
+   git commit -m "Document bill splitter hypothesis"
+   git push -u origin copilot/test-debug
+   ```
+
+   Mona will check your branch and notes, then post the next step in the exercise issue.
 
 <details>
 <summary>Having trouble? 🤷</summary><br/>
 
-- (replace-me: Troubleshooting tip or hint)
-- (replace-me: Additional troubleshooting tips as needed)
+- If dependencies are not ready, run `python -m pip install -r requirements.txt`.
+- A useful hypothesis names a suspicious operation and predicts which input shape will expose it.
+- If grading fails, update `DEBUGGING.md`, commit, and push again on the same branch.
 
 </details>

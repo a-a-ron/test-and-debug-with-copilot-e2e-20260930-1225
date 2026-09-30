@@ -1,36 +1,44 @@
-## Step 2: (replace-me: STEP-NAME)
+## Step 2: Generate focused tests from behavior
 
-(replace-me: OPTIONAL Brief story or scenario to introduce the step)
+Your hypothesis is useful only if tests can challenge it. Start with clear, ordinary examples before reaching for edge cases.
 
-### 📖 Theory: (replace-me: Theory title)
+### 📖 Theory: Prompt with a contract
 
-<!-- GitHub-styled notifications can be used outside of ordered lists. Available options are: NOTE, IMPORTANT, WARNING, TIP, CAUTION -->
-<!--
-> [!NOTE]
-> (Important note or additional information relevant to this section)
- -->
+Tests generated from vague prompts often mirror the implementation instead of checking useful behavior. Give Copilot explicit inputs, outputs, names, and constraints. Then read each assertion: a test that passes is valuable only when it proves something intentional.
 
-(replace-me: Optional theory or background information relevant to this step)
+### ⌨️ Activity: Add two focused unit tests
 
-(replace-me: OPTIONAL Reference images from the `.github/images/` directory to support any part of the content)
+1. In the **Codespace editor**, open `tests/test_bill_splitter.py`.
 
-<img width="200" alt="descriptive alt text" src="../images/inflatocat.png" />
+1. In **Copilot Chat**, provide this behavior contract and ask for two pytest tests:
 
+   - `test_even_split`: splitting `$42.00` among 3 people returns three `Decimal("14.00")` shares.
+   - `test_tip_is_included`: splitting `$80.00` among 4 people with a 25% tip returns four `Decimal("25.00")` shares.
+   - Use the public `split_bill` function. Do not duplicate its calculation in the test.
 
-### ⌨️ Activity: (replace-me: Activity title)
+1. In the **Codespace editor**, inspect Copilot's proposed tests before accepting them. Confirm that each test has one clear reason to fail and asserts the complete returned list.
 
-1. (replace-me: First instruction)
+1. In the **Codespace terminal**, run the tests:
 
-    (replace-me: Make sure to properly indent any multiline instructions)
+   ```bash
+   python -m pytest -q
+   ```
 
-1. (replace-me: Second instruction)
+1. In the **Codespace terminal**, commit and push only after the full suite passes:
 
-1. (replace-me: Additional instructions as needed)
+   ```bash
+   git add tests/test_bill_splitter.py
+   git commit -m "Add focused bill splitting tests"
+   git push
+   ```
+
+   Mona will verify the named behaviors and prepare the edge-case investigation.
 
 <details>
 <summary>Having trouble? 🤷</summary><br/>
 
-- (replace-me: Troubleshooting tip or hint)
-- (replace-me: Additional troubleshooting tips as needed)
+- Import `Decimal` from Python's `decimal` module.
+- Keep the exact test names so the grader can give focused feedback.
+- If a generated test computes its expected result with the same formula as the production code, replace that calculation with an explicit expected value.
 
 </details>

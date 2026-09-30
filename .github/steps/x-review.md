@@ -1,16 +1,18 @@
 ## Review
 
-_Congratulations, you've completed this exercise and learned a lot about (replace-me: feature/product that was taught in this exercise)
-
-<img src="https://octodex.github.com/images/jetpacktocat.png" alt="celebrate" width=200 align=right>
+_Congratulations! You used GitHub Copilot as a testing and debugging partner while keeping evidence and judgment in the driver's seat._
 
 Here's a recap of your accomplishments:
 
-- (replace-me: Accomplishment #1)
-- (replace-me: Accomplishment #N)
+- Explained unfamiliar code before editing it.
+- Turned an explicit behavior contract into focused unit tests.
+- Found missing edge cases by checking a domain invariant.
+- Used failing-test evidence to diagnose the root cause.
+- Repaired and refactored the implementation without changing its public contract.
+- Reviewed the final diff and documented how Copilot's output was verified.
 
 ### What's next?
 
-- (replace-me: Natural follow up Skills exercise - if there is one)
-- (replace-me: Documentation link to learn more about the feature)
-- (replace-me: Other resources or calls to action)
+- Apply the same evidence-first loop to a larger change in [Build Applications with Copilot Agent Mode](https://github.com/skills/build-applications-w-copilot-agent-mode).
+- Learn more about [asking GitHub Copilot questions in your IDE](https://docs.github.com/en/copilot/using-github-copilot/asking-github-copilot-questions-in-your-ide).
+- Explore [Python testing with pytest](https://docs.pytest.org/en/stable/getting-started.html).
