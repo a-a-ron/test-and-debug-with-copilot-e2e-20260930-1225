@@ -5,6 +5,23 @@ import pytest
 from src.bill_splitter import split_bill
 
 
+def test_even_split():
+    assert split_bill("42.00", 3) == [
+        Decimal("14.00"),
+        Decimal("14.00"),
+        Decimal("14.00"),
+    ]
+
+
+def test_tip_is_included():
+    assert split_bill("80.00", 4, 25) == [
+        Decimal("25.00"),
+        Decimal("25.00"),
+        Decimal("25.00"),
+        Decimal("25.00"),
+    ]
+
+
 def test_zero_subtotal_returns_zero_shares():
     assert split_bill("0", 2) == [Decimal("0.00"), Decimal("0.00")]
 
