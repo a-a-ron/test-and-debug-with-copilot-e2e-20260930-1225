@@ -8,6 +8,8 @@ Generated tests frequently overrepresent common inputs. Add cases around roundin
 
 ### ⌨️ Activity: Add edge cases that expose the bug
 
+![Codespaces editor and terminal showing the two remainder-cent tests, their expected failures, and the follow-up diagnosis prompt](../images/activity-edge-case-failures.png)
+
 1. In **Copilot Chat**, ask for likely edge cases in money splitting. Compare the suggestions with your hypothesis in `DEBUGGING.md`; do not accept the list blindly.
 
 1. In the **Codespace editor**, add these two tests to `tests/test_bill_splitter.py`:

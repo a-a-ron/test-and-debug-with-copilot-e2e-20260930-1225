@@ -11,6 +11,8 @@ Copilot is useful for explaining unfamiliar code and suggesting hypotheses. Its 
 
 ### ⌨️ Activity: Explain the code and form a hypothesis
 
+![Codespaces workspace with bill_splitter.py open, the baseline tests passing in the terminal, and an evidence-focused prompt in Copilot Chat](../images/activity-investigate-workspace.png)
+
 1. In the **GitHub web UI**, open the exercise issue that contains this comment.
 
 1. In the **GitHub web UI**, select **Code** > **Codespaces** > **Create codespace on main**. Wait for VS Code to open.
