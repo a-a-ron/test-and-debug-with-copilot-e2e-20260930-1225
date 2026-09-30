@@ -22,6 +22,22 @@ def test_tip_is_included():
     ]
 
 
+def test_remainder_pennies_are_distributed():
+    assert split_bill("10.00", 3) == [
+        Decimal("3.34"),
+        Decimal("3.33"),
+        Decimal("3.33"),
+    ]
+
+
+def test_tip_rounding_preserves_every_cent():
+    assert split_bill("10.01", 3, 20) == [
+        Decimal("4.01"),
+        Decimal("4.00"),
+        Decimal("4.00"),
+    ]
+
+
 def test_zero_subtotal_returns_zero_shares():
     assert split_bill("0", 2) == [Decimal("0.00"), Decimal("0.00")]
 
