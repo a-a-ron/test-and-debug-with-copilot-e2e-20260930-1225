@@ -26,6 +26,12 @@ def split_bill(
 
     tip = subtotal_amount * tip_rate / ONE_HUNDRED
     total = (subtotal_amount + tip).quantize(CENT, rounding=ROUND_HALF_UP)
-    share = (total / people).quantize(CENT, rounding=ROUND_HALF_UP)
+    total_cents = int(total * ONE_HUNDRED)
+    base_cents, remainder = divmod(total_cents, people)
 
-    return [share] * people
+    return [
+        (
+            Decimal(base_cents + (index < remainder)) / ONE_HUNDRED
+        ).quantize(CENT)
+        for index in range(people)
+    ]
